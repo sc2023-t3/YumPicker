@@ -60,7 +60,7 @@ async def ask_result(query: CallbackQuery, update: Update, context: ContextTypes
     ]
 
     await query.edit_message_text(
-        text="**🍽️ 這是你的結果！**\n\n"
+        text="🍽️ 這是你的結果！\n\n"
              "📍 店名：國立陽明交通大學第二餐廳\n"
              "🏷️ 類型：中式\n"
              "💰 價位：$ (100~200元)\n"
