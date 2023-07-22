@@ -1,32 +1,40 @@
 import logging
-from os import getenv
+import os
+from importlib import import_module
 
 from colorlog import ColoredFormatter
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-
-from process import ask_length, ask_rates, ask_prices, ask_types, ask_result
+from telegram.ext import Application
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await ask_length(update, context)
+def list_modules(directory):
+    file_list = []
+
+    for root, _, files in os.walk(directory):
+        for file in files:
+            relative_path = os.path.relpath(os.path.join(root, file), directory)
+            dotted_path = os.path.splitext(relative_path)[0].replace(os.path.sep, '.')
+            file_list.append(dotted_path)
+
+    return file_list
 
 
-async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    query = update.callback_query
+def load_extension(application: Application, name: str):
+    module = import_module(name)
 
-    await query.answer()
+    module.setup(application)
 
-    match query.data:
-        case "to_rates":
-            await ask_rates(query, update, context)
-        case "to_prices":
-            await ask_prices(query, update, context)
-        case "to_types":
-            await ask_types(query, update, context)
-        case "to_result":
-            await ask_result(query, update, context)
+
+def load_extensions_in(application: Application, package: str):
+    """
+    Load all extensions in a directory
+    :param application: The application to load extensions in
+    :param package: The package to load extensions from
+    :return: None
+    """
+    for file in list_modules(package):
+        load_extension(application, f"{package}.{file}")
 
 
 def setup_logging():
@@ -64,10 +72,9 @@ def main() -> None:
 
     setup_logging()
 
-    application = Application.builder().token(getenv("TELEGRAM_TOKEN")).build()
+    application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(button))
+    load_extensions_in(application, "extensions")
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
