@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from importlib import import_module
@@ -6,23 +7,6 @@ from colorlog import ColoredFormatter
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application
-
-
-def list_modules(directory: str) -> list[str]:
-    """
-    List all modules in a directory
-    :param directory: The directory to list modules in
-    :return: A list of modules
-    """
-    file_list = []
-
-    for root, _, files in os.walk(directory):
-        for file in files:
-            relative_path = os.path.relpath(os.path.join(root, file), directory)
-            dotted_path = os.path.splitext(relative_path)[0].replace(os.path.sep, '.')
-            file_list.append(dotted_path)
-
-    return file_list
 
 
 def load_extension(application: Application, name: str) -> None:
@@ -37,15 +21,12 @@ def load_extension(application: Application, name: str) -> None:
     module.setup(application)
 
 
-def load_extensions_in(application: Application, package: str):
-    """
-    Load all extensions in a directory
-    :param application: The application to load extensions in
-    :param package: The package to load extensions from
-    :return: None
-    """
-    for file in list_modules(package):
-        load_extension(application, f"{package}.{file}")
+def load_extensions(application: Application) -> None:
+    with open("extensions.json", 'r', encoding='utf-8') as f:
+        extensions = json.load(f)
+
+    for extension in extensions:
+        load_extension(application, extension)
 
 
 def setup_logging() -> None:
@@ -85,7 +66,7 @@ def main() -> None:
 
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
 
-    load_extensions_in(application, "extensions")
+    load_extensions(application)
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
