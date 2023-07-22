@@ -7,9 +7,6 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 from process import ask_length, ask_rates, ask_prices, ask_types, ask_result
-from utils.wait_for import Waiter
-
-waiter = Waiter()
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
