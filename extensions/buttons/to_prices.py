@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, Application, CallbackQueryHandler
 
 
-async def ask_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def ask_prices(update: Update, _: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
 
     await query.answer()

@@ -2,7 +2,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes, Application, CallbackQueryHandler
 
 
-async def ask_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def ask_types(update: Update, _: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
 
     await query.answer()
