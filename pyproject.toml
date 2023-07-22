@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "concept"
+version = "0.1.0"
+description = ""
+authors = ["Nat1an <nathan@nat1an.xyz>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-telegram-bot = "^20.4"
+python-dotenv = "^1.0.0"
+colorlog = "^6.7.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
