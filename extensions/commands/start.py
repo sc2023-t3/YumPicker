@@ -3,6 +3,11 @@ from telegram.ext import Application, ContextTypes, CommandHandler
 
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE):
+    """
+    Start the conversation.
+    :param update: The update object from telegram.
+    :param _: The context object from telegram.
+    """
     keyboard = [
         [
             InlineKeyboardButton("<100m", callback_data="to_rates"),

@@ -3,6 +3,11 @@ from telegram.ext import Application, CallbackQueryHandler, ContextTypes
 
 
 async def ask_rates(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Ask user for the lowest rates of the restaurant they can accept.
+    :param update: The update object from telegram.
+    :param _: The context object from telegram.
+    """
     query = update.callback_query
 
     await query.answer()

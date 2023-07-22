@@ -3,6 +3,11 @@ from telegram.ext import ContextTypes, Application, CallbackQueryHandler
 
 
 async def ask_types(update: Update, _: ContextTypes.DEFAULT_TYPE):
+    """
+    Ask user what type of food they want to eat.
+    :param update: The update object from telegram.
+    :param _: The context object from telegram.
+    """
     query = update.callback_query
 
     await query.answer()

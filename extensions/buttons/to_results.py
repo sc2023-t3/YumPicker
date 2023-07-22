@@ -2,7 +2,12 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import ContextTypes, Application, CallbackQueryHandler
 
 
-async def ask_result(update: Update, _: ContextTypes.DEFAULT_TYPE):
+async def send_results(update: Update, _: ContextTypes.DEFAULT_TYPE):
+    """
+    Send the results to the user.
+    :param update: The update object from telegram.
+    :param _: The context object from telegram.
+    """
     query = update.callback_query
 
     await query.answer()
@@ -26,4 +31,4 @@ async def ask_result(update: Update, _: ContextTypes.DEFAULT_TYPE):
 
 
 def setup(application: Application):
-    application.add_handler(CallbackQueryHandler(ask_result, pattern="to_result"))
+    application.add_handler(CallbackQueryHandler(send_results, pattern="to_result"))
