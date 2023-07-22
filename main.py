@@ -8,7 +8,12 @@ from telegram import Update
 from telegram.ext import Application
 
 
-def list_modules(directory):
+def list_modules(directory: str) -> list[str]:
+    """
+    List all modules in a directory
+    :param directory: The directory to list modules in
+    :return: A list of modules
+    """
     file_list = []
 
     for root, _, files in os.walk(directory):
@@ -20,7 +25,13 @@ def list_modules(directory):
     return file_list
 
 
-def load_extension(application: Application, name: str):
+def load_extension(application: Application, name: str) -> None:
+    """
+    Load an extension
+    :param application: The application to load the extension in
+    :param name: The name of the extension
+    :return: None
+    """
     module = import_module(name)
 
     module.setup(application)
@@ -37,7 +48,7 @@ def load_extensions_in(application: Application, package: str):
         load_extension(application, f"{package}.{file}")
 
 
-def setup_logging():
+def setup_logging() -> None:
     """
     Set up the loggings for the bot
     :return: None
