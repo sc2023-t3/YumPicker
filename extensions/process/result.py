@@ -6,7 +6,7 @@ from classes.states import States
 
 
 async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    data: UserAnswers = context.chat_data.get("data")
+    data: UserAnswers = context.chat_data.get("data")  # skipcq: PYL-W0612
 
     keyboard = [
         [InlineKeyboardButton(
