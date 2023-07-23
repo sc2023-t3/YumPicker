@@ -2,36 +2,45 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import Application, ContextTypes, CommandHandler, ConversationHandler, MessageHandler, filters, \
     CallbackQueryHandler
 
+from classes.data import UserAnswers
 from classes.states import States
 from extensions.process.distance import receive_distance
+from extensions.process.kinds import random_kind, receive_kinds
 from extensions.process.location import receive_location
 from extensions.process.prices import receive_prices
 from extensions.process.rates import receive_rates
+from extensions.process.result import receive_result_reactions
 
 
-async def start(update: Update, _: ContextTypes.DEFAULT_TYPE):
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Cancel the conversation.
+    :param update: The update object from telegram.
+    :param context: The context object from telegram.
+    """
+    if context.chat_data.get("data"):
+        context.chat_data.pop("data")
+
+    await update.message.reply_text("好的！我清除了對話資料，讓我們從頭再來一次 ✨")
+
+    return ConversationHandler.END
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Start the conversation.
     :param update: The update object from telegram.
-    :param _: The context object from telegram.
+    :param context: The context object from telegram.
     """
+    context.chat_data.update({"data": UserAnswers()})
+
     await update.message.reply_text(
-        "Hello, I'm a bot that helps you find a restaurant to eat.\n"
-        "Please send me your location so I can find the nearest restaurant for you.",
+        "嗨！我是 YumPicker\n"
+        "請傳送給我你的位置訊息，讓我幫你找出附近的餐廳 🍽️",
         reply_markup=ReplyKeyboardRemove()
     )
 
     return States.ASKING_LOCATION
-
-
-async def done(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Display the gathered info and end the conversation."""
-    await update.message.reply_text(
-        f"Done",
-        reply_markup=ReplyKeyboardRemove()
-    )
-
-    return ConversationHandler.END
 
 
 def setup(application: Application):
@@ -40,11 +49,13 @@ def setup(application: Application):
             entry_points=[CommandHandler("start", start)],
             states={
                 States.ASKING_LOCATION: [MessageHandler(filters.LOCATION, receive_location)],
-                States.ASKING_DISTANCE: [CallbackQueryHandler(receive_distance, pattern="^to_prices$")],
-                States.ASKING_RATES: [CallbackQueryHandler(receive_rates, pattern="^to_rates$")],
-                States.ASKING_PRICES: [CallbackQueryHandler(receive_prices, pattern="^to_prices$")],
-                States.ASKING_KINDS: []
+                States.ASKING_DISTANCE: [CallbackQueryHandler(receive_distance, pattern=r"distance\(.*\)")],
+                States.ASKING_RATES: [CallbackQueryHandler(receive_rates, pattern=r"rates\(.*\)")],
+                States.ASKING_PRICES: [CallbackQueryHandler(receive_prices, pattern=r"prices\(.*\)")],
+                States.ASKING_KINDS: [CallbackQueryHandler(random_kind, pattern=r"random_kind"),
+                                      MessageHandler(filters.TEXT, receive_kinds)],
+                States.RESULT: [CallbackQueryHandler(receive_result_reactions, pattern=r"result\(.*\)")]
             },
-            fallbacks=[MessageHandler(filters.Regex("^Done$"), done)]
+            fallbacks=[CommandHandler("cancel", cancel)]
         )
     )
