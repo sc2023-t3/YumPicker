@@ -14,6 +14,33 @@ class Restaurant:
 
     @classmethod
     def from_dict(cls, data: dict):
+        try:
+            data["opening_hours"]["open_now"]
+        except KeyError:
+            data["opening_hours"] = {}
+            data["opening_hours"]["open_now"] = False
+
+        try:
+            data["price_level"]
+        except KeyError:
+            data["price_level"] = 0
+
+        try:
+            data["photos"][0]["photo_reference"]
+        except KeyError:
+            data["photos"] = []
+            data["photos"].append({"photo_reference": ""})
+
+        try:
+            data["rating"]
+        except KeyError:
+            data["rating"] = 0.0
+
+        try:
+            data["vicinity"]
+        except KeyError:
+            data["vicinity"] = ""
+
         return cls(
             name=data["name"],
             open_now=data["opening_hours"]["open_now"],

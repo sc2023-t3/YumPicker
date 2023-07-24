@@ -18,7 +18,7 @@ def check_restaurant(restaurant: Restaurant, data: UserAnswers) -> bool:
 
 def fetch_restaurants(data: UserAnswers) -> list[Restaurant]:
     url = f"https://maps.googleapis.com/maps/api/place/nearbysearch/json" \
-          f"?location={data.location.longitude},{data.location.latitude}" \
+          f"?location={data.location.latitude},{data.location.longitude}" \
           f"&radius={data.distance.value}" \
           f"&type=restaurant" \
           f"&language=zh-TW" \
@@ -40,14 +40,16 @@ def fetch_restaurants(data: UserAnswers) -> list[Restaurant]:
 async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data: UserAnswers = context.chat_data.get("data")  # skipcq: PYL-W0612
 
-    restaurant: Restaurant = random.choice(fetch_restaurants(data))
-
-    print(restaurant)
+    try:
+        restaurant: Restaurant = random.choice(fetch_restaurants(data))
+    except IndexError:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="很抱歉，我找不到符合您需求的餐廳😢")
+        return ConversationHandler.END
 
     keyboard = [
         [InlineKeyboardButton(
             "🗾 Google Map",
-            url="https://www.google.com.tw/maps/place/%E5%9C%8B%E7%AB%8B%E9%99%BD%E6%98%8E%E4%BA%A4%E9%80%9A%E5%A4%A7%E5%AD%B8%E7%AC%AC%E4%BA%8C%E9%A4%90%E5%BB%B3/@24.7879049,120.9975688,17.63z/data=!3m1!5s0x3468360e62bbab7b:0x4cf3e94af2597f85!4m6!3m5!1s0x34683611dcf63a29:0xc53353416c0f7c1e!8m2!3d24.789302!4d120.997197!16s%2Fg%2F1pzwsht95?hl=zh-TW&entry=ttu"
+            url=f"https://www.google.com/maps/search/{restaurant.name}/@{restaurant.location.latitude},{restaurant.location.longitude},15z"
         )],
         [InlineKeyboardButton("🔁 再來一次", callback_data="result(retry)")],
         [InlineKeyboardButton("🛑 停止對話", callback_data="result(stop)")]
@@ -60,17 +62,6 @@ async def send_result(update: Update, context: ContextTypes.DEFAULT_TYPE):
              f"💰 價位：{'$' * restaurant.price_level}\n"
              f"✨ 評價：{'⭐' * int(restaurant.rating)}\n",
         reply_markup=InlineKeyboardMarkup(keyboard)
-    )
-
-    await context.bot.send_location(
-        chat_id=update.effective_chat.id,
-        latitude=restaurant.location.latitude,
-        longtitude=restaurant.location.longitude
-    )
-    picture_url = "https://lh3.googleusercontent.com/places/ANJU3DvZWxia50ruLDuyjO4hJnYQwybjhkEo5ssN_bxAe5Ex7BxQADqrNI_kwW8EhfocsN8njDeGsjBOH7KGDP3Zbs-57XySvBqN0KA=s1600-w1280-h720"
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=picture_url
     )
 
 
