@@ -28,8 +28,7 @@ class Restaurant:
         try:
             data["photos"][0]["photo_reference"]
         except KeyError:
-            data["photos"] = []
-            data["photos"].append({"photo_reference": ""})
+            data["photos"] = [{"photo_reference": ""}]
 
         try:
             data["rating"]
