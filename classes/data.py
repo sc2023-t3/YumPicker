@@ -6,9 +6,9 @@ from classes.utils import MISSING
 
 
 class Distance(Enum):
-    SHORT = "<200"
-    MEDIUM = "200-1000"
-    LONG = ">1000m"
+    SHORT = "200"
+    MEDIUM = "500"
+    LONG = "5000"
     RANDOM = "random"
 
 
@@ -18,16 +18,15 @@ class Rates(Enum):
     THREE = "3"
     FOUR = "4"
     FIVE = "5"
-    RANDOM = "random"
+    RANDOM = "0"
 
 
 class Price(Enum):
-    FREE = "0"
     INEXPENSIVE = "1"
     MODERATE = "2"
     EXPENSIVE = "3"
     VERY_EXPENSIVE = "4"
-    RANDOM = "random"
+    RANDOM = "0"
 
 
 class UserAnswers:
@@ -36,4 +35,4 @@ class UserAnswers:
         self.distance: Distance = MISSING
         self.rates: Rates = MISSING
         self.price: Price = MISSING
-        self.kinds = MISSING
+        self.keywords = MISSING

@@ -1,3 +1,4 @@
+import random
 import re
 
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
@@ -10,9 +11,9 @@ from extensions.process.rates import ask_rates
 
 async def ask_distance(update: Update, _: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("🩴 <200m", callback_data="distance(<200)")],
-        [InlineKeyboardButton("👟 200 ~ 1000m", callback_data="distance(200-1000)")],
-        [InlineKeyboardButton("🥾 >1000m", callback_data="distance(>1000m)")],
+        [InlineKeyboardButton("🩴 < 200m", callback_data="distance(200)")],
+        [InlineKeyboardButton("👟 < 500m", callback_data="distance(500)")],
+        [InlineKeyboardButton("🥾 < 5000m", callback_data="distance(5000)")],
         [InlineKeyboardButton("我不知道 / 幫我決定😶", callback_data="distance(random)")]
     ]
 
@@ -28,9 +29,12 @@ async def receive_distance(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     :param update: The update object from telegram.
     :param context: The context object from telegram.
     """
-    distance = re.search(r"distance\((.*)\)", update.callback_query.data)
+    distance = re.search(r"distance\((.*)\)", update.callback_query.data).group(1)
 
-    context.chat_data.get("data").distance = Distance(distance.group(1))
+    if distance == "random":
+        random.choice(["200", "500", "5000"])
+
+    context.chat_data.get("data").distance = Distance(distance)
 
     await ask_rates(update, context)
     return States.ASKING_RATES

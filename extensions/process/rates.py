@@ -15,7 +15,7 @@ async def ask_rates(update: Update, _: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("⭐⭐⭐", callback_data="rates(3)")],
         [InlineKeyboardButton("⭐⭐⭐⭐", callback_data="rates(4)")],
         [InlineKeyboardButton("⭐⭐⭐⭐⭐", callback_data="rates(5)")],
-        [InlineKeyboardButton("我不知道 / 幫我決定😶", callback_data="rates(random)")],
+        [InlineKeyboardButton("我不知道 / 幫我決定😶", callback_data="rates(0)")],
     ]
 
     await update.callback_query.edit_message_text(

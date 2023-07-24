@@ -5,7 +5,7 @@ from telegram.ext import Application, ContextTypes, CommandHandler, Conversation
 from classes.data import UserAnswers
 from classes.states import States
 from extensions.process.distance import receive_distance
-from extensions.process.kinds import random_kind, receive_kinds
+from extensions.process.kinds import no_keywords, receive_keywords
 from extensions.process.location import receive_location
 from extensions.process.prices import receive_prices
 from extensions.process.rates import receive_rates
@@ -52,8 +52,8 @@ def setup(application: Application):
                 States.ASKING_DISTANCE: [CallbackQueryHandler(receive_distance, pattern=r"distance\(.*\)")],
                 States.ASKING_RATES: [CallbackQueryHandler(receive_rates, pattern=r"rates\(.*\)")],
                 States.ASKING_PRICES: [CallbackQueryHandler(receive_prices, pattern=r"prices\(.*\)")],
-                States.ASKING_KINDS: [CallbackQueryHandler(random_kind, pattern=r"random_kind"),
-                                      MessageHandler(filters.TEXT, receive_kinds)],
+                States.ASKING_KEYWORDS: [CallbackQueryHandler(no_keywords, pattern=r"no_keyword"),
+                                         MessageHandler(filters.TEXT, receive_keywords)],
                 States.RESULT: [CallbackQueryHandler(receive_result_reactions, pattern=r"result\(.*\)")]
             },
             fallbacks=[CommandHandler("cancel", cancel)]

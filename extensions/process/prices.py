@@ -5,17 +5,16 @@ from telegram.ext import ContextTypes
 
 from classes.data import Price
 from classes.states import States
-from extensions.process.kinds import ask_kinds
+from extensions.process.kinds import ask_keywords
 
 
 async def ask_prices(update: Update, _: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("💰", callback_data="prices(0)")],
         [InlineKeyboardButton("💰💰", callback_data="prices(1)")],
         [InlineKeyboardButton("💰💰💰", callback_data="prices(2)")],
         [InlineKeyboardButton("💰💰💰💰", callback_data="prices(3)")],
         [InlineKeyboardButton("💰💰💰💰💰", callback_data="prices(4)")],
-        [InlineKeyboardButton("我不知道 / 幫我決定😶", callback_data="prices(random)")]
+        [InlineKeyboardButton("我不知道 / 幫我決定😶", callback_data="prices(0)")]
     ]
 
     await update.callback_query.edit_message_text(
@@ -34,5 +33,5 @@ async def receive_prices(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     context.chat_data.get("data").price = Price(prices.group(1))
 
-    await ask_kinds(update, context)
-    return States.ASKING_KINDS
+    await ask_keywords(update, context)
+    return States.ASKING_KEYWORDS
